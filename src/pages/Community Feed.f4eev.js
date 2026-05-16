@@ -22,7 +22,7 @@ import { currentMember } from 'wix-members';
     $w('#postRepeater').onItemReady(($item, itemData) => {
       $item('#titleText').text = itemData.title;
       $item('#contentText').text = itemData.content;
-      $item('#authorText').text = 'By ' + itemData.authorName;
+      $item('#authorText').text = 'By ' + (itemData.anonymous ? 'Anonymous' : itemData.authorName);
       if (itemData.imageUrl) {
         $item('#postImage').src = itemData.imageUrl;
         $item('#postImage').fitMode = 'fit';
