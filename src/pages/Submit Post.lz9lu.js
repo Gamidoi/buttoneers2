@@ -33,7 +33,9 @@
           const uploadResult = await $w('#imageUpload').startUpload();
           imageUrl = uploadResult.url;
         }
-        await submitPost(title, content, imageUrl);
+        const anonymous = $w('#anonCheckbox').checked;
+        const shareable = $w('#shareableCheckbox').checked;
+        await submitPost(title, content, imageUrl, anonymous, shareable);
         $w('#titleInput').value = '';
         $w('#contentInput').value = '';
         $w('#imageUpload').reset();
