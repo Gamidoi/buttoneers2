@@ -1,6 +1,15 @@
 import { getApprovedPosts } from 'backend/communityPosts.jsw';
+import { currentMember } from 'wix-members';
 
   $w.onReady(async function () {
+    const member = await currentMember.getMember().catch(() => null);
+    if (member) {
+      const roles = await currentMember.getRoles().catch(() => []);
+      console.log('[Community Feed] Logged-in member:', member.loginEmail || member._id);
+      console.log('[Community Feed] Roles:', JSON.stringify(roles));
+    } else {
+      console.log('[Community Feed] No member logged in');
+    }
     $w('#noPostsText').hide();
 
     const posts = await getApprovedPosts();
