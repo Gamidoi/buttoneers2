@@ -1,0 +1,57 @@
+
+  import wixData from 'wix-data';
+  import { currentMember } from 'wix-members-backend';
+
+  const COLLECTION = 'CommunityPosts';
+
+  async function requireAdmin() {
+    const member = await currentMember.getMember();
+    if (!member) throw new Error('Not authenticated');
+    const roles = await currentMember.getRoles();
+    if (!roles.some(r => r.title === 'Moderator') && !roles.some(r => r.title === 'Admin')) throw new Error('Access denied');
+  }
+
+  export async function submitPost(title, content, imageUrl = null) {
+    const member = await currentMember.getMember({ fieldsets: ['FULL'] });
+    if (!member) throw new Error('Must be logged in to post.');
+    const authorName = member.profile?.nickname || member.profile?.name?.first || 'Member';
+    const item = await wixData.insert(COLLECTION, {
+      title, content,
+      ...(imageUrl && { imageUrl }),
+      authorId: member._id,
+      authorName,
+      status: 'pending'
+    }, { suppressAuth: true });
+    return { success: true, postId: item._id };
+  }
+
+  export async function getApprovedPosts() {
+    const results = await wixData.query(COLLECTION)
+      .eq('status', 'approved')
+      .descending('_createdDate')
+      .find({ suppressAuth: true });
+    return results.items;
+  }
+
+  export async function getPendingPosts() {
+    await requireAdmin();
+    const results = await wixData.query(COLLECTION)
+      .eq('status', 'pending')
+      .ascending('_createdDate')
+      .find({ suppressAuth: true });
+    return results.items;
+  }
+
+  export async function approvePost(postId) {
+    await requireAdmin();
+    const post = await wixData.get(COLLECTION, postId, { suppressAuth: true });
+    post.status = 'approved';
+    await wixData.update(COLLECTION, post, { suppressAuth: true });
+    return { success: true };
+  }
+
+  export async function rejectPost(postId) {
+    await requireAdmin();
+    await wixData.remove(COLLECTION, postId, { suppressAuth: true });
+    return { success: true };
+  }
