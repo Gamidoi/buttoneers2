@@ -13,7 +13,8 @@ $w.onReady(async function () {
     if (!member) return;
 
     const roles = await currentMember.getRoles().catch(() => []);
-    const isAdmin = roles.some(r => r.title === 'Admin' || r.title === 'Moderator');
+    const adminTitles = ['admin', 'moderator', 'owner', 'co-owner'];
+    const isAdmin = roles.some(r => adminTitles.includes(r.title?.toLowerCase().trim()));
     if (isAdmin) {
         const menu = $w('#horizontalMenu1');
         menu.menuItems = [...menu.menuItems, { label: 'Admin', link: '/admin-review' }];
