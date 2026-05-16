@@ -46,6 +46,7 @@ $w.onReady(async function () {
       $w('#statusMessage').text = 'Challenge added successfully!';
       $w('#statusMessage').show();
     } catch (err) {
+      console.log(err);
       $w('#statusMessage').text = 'Failed to add challenge. Please try again.';
       $w('#statusMessage').show();
     } finally {
