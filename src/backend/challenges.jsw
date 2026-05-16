@@ -2,20 +2,17 @@
 import wixData from 'wix-data';
 import { currentMember } from 'wix-members-backend';
 
-const COLLECTION = 'challenges';
+const COLLECTION = 'Challenges';
 
-async function requireAdmin() {
+
+export async function insertChallenge(month, title, content, imageUrl = null) {
   const member = await currentMember.getMember();
   if (!member) throw new Error('Not authenticated');
   const roles = await currentMember.getRoles();
   if (!roles.some(r => r.title === 'Admin') && !roles.some(r => r.title === 'Moderator')) {
     throw new Error('Access denied');
   }
-}
 
-export async function insertChallenge(month, title, content, imageUrl = null) {
-  await requireAdmin();
-  const member = await currentMember.getMember({ fieldsets: ['FULL'] });
   const authorName = member.profile?.nickname || member.profile?.name?.first || 'Admin';
   const item = await wixData.insert(COLLECTION, {
     month,

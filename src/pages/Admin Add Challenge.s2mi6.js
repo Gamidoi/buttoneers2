@@ -46,8 +46,8 @@ $w.onReady(async function () {
       $w('#statusMessage').text = 'Challenge added successfully!';
       $w('#statusMessage').show();
     } catch (err) {
-      console.log(err);
-      $w('#statusMessage').text = 'Failed to add challenge. Please try again.';
+      console.error('insertChallenge error:', err);
+      $w('#statusMessage').text = `Failed to add challenge: ${err.message || err}`;
       $w('#statusMessage').show();
     } finally {
       $w('#SubmitNewChallengeButton').enable();
