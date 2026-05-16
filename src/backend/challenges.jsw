@@ -4,6 +4,13 @@ import { currentMember } from 'wix-members-backend';
 
 const COLLECTION = 'Challenges';
 
+export async function getChallenges() {
+  const result = await wixData.query(COLLECTION)
+    .descending('_createdDate')
+    .find({ suppressAuth: true });
+  return result.items;
+}
+
 
 export async function insertChallenge(month, title, content, imageUrl = null) {
   const member = await currentMember.getMember();

@@ -1,10 +1,25 @@
-// API Reference: https://www.wix.com/velo/reference/api-overview/introduction
-// “Hello, World!” Example: https://learn-code.wix.com/en/article/hello-world
+import { getChallenges } from 'backend/challenges.jsw';
 
-$w.onReady(function () {
-    // Write your JavaScript here
+$w.onReady(async function () {
+  const challenges = await getChallenges();
 
-    // To select an element by ID use: $w('#elementID')
+  if (challenges.length === 0) {
+    $w('#repeater1').hide();
+    return;
+  }
 
-    // Click 'Preview' to run your code
+  $w('#repeater1').data = challenges.map(c => ({ _id: c._id, ...c }));
+
+  $w('#repeater1').onItemReady(($item, itemData) => {
+    $item('#ChallengeTitle').text = itemData.title || '';
+    $item('#ChallengeBody').text = itemData.content || '';
+    $item('#ChllengeMonth').text = itemData.month || '';
+
+    if (itemData.imageUrl) {
+      $item('#ChallengeImage').src = itemData.imageUrl;
+      $item('#ChallengeImage').show();
+    } else {
+      $item('#ChallengeImage').hide();
+    }
+  });
 });
