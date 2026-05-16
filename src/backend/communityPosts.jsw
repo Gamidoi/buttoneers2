@@ -1,12 +1,14 @@
 
   import wixData from 'wix-data';
   import { currentMember } from 'wix-members-backend';
+  import { currentUser } from 'wix-users-backend';
 
   const COLLECTION = 'CommunityPosts';
 
   async function requireAdmin() {
     const member = await currentMember.getMember();
     if (!member) throw new Error('Not authenticated');
+    if (currentUser.role === 'Admin') return;
     const roles = await currentMember.getRoles();
     if (!roles.some(r => r.title === 'Moderator') && !roles.some(r => r.title === 'Admin')) throw new Error('Access denied');
   }
